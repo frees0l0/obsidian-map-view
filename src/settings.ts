@@ -58,8 +58,9 @@ export type PluginSettings = {
     urlParsingRules?: UrlParsingRule[];
     mapControls?: MapControls;
     maxClusterRadiusPixels: number;
-    searchProvider?: 'osm' | 'google';
+    searchProvider?: 'osm' | 'google' | 'amap';
     geocodingApiKey?: string;
+    geocodingApiKeyAMap?: string;
     useGooglePlaces?: boolean;
     saveHistory?: boolean;
     queryForFollowActiveNote?: string;

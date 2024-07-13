@@ -54,25 +54,29 @@ export class SettingsTab extends PluginSettingTab {
             });
 
         let apiKeyControl: Setting = null;
+        let apiKeyControlAMap: Setting = null;
         new Setting(containerEl)
             .setName('Geocoding search provider')
             .setDesc(
-                'The service used for searching for geolocations. To use Google, see details in the plugin documentation.'
+                'The service used for searching for geolocations. To use Google or AMap, see details in the plugin documentation.'
             )
             .addDropdown((component) => {
                 component
                     .addOption('osm', 'OpenStreetMap')
                     .addOption('google', 'Google (API key required)')
+                    .addOption('amap', 'AMap (API key required)')
                     .setValue(
                         this.plugin.settings.searchProvider ||
                             DEFAULT_SETTINGS.searchProvider
                     )
-                    .onChange(async (value: 'osm' | 'google') => {
+                    .onChange(async (value: 'osm' | 'google' | 'amap') => {
                         this.plugin.settings.searchProvider = value;
                         await this.plugin.saveSettings();
                         this.refreshPluginOnHide = true;
                         apiKeyControl.settingEl.style.display =
                             value === 'google' ? '' : 'none';
+                        apiKeyControlAMap.settingEl.style.display =
+                            value === 'amap' ? '' : 'none';
                         googlePlacesControl.settingEl.style.display =
                             this.plugin.settings.searchProvider === 'google'
                                 ? ''
@@ -100,6 +104,26 @@ export class SettingsTab extends PluginSettingTab {
                     ? ''
                     : 'red';
             });
+        apiKeyControlAMap = new Setting(containerEl)
+            .setName('Gecoding API key')
+            .setDesc(
+                'If using AMap as the geocoding search provider, paste the API key here. See the plugin documentation for more details. Changes are applied after restart.'
+            )
+            .addText((component) => {
+                component
+                    .setValue(this.plugin.settings.geocodingApiKeyAMap)
+                    .onChange(async (value) => {
+                        this.plugin.settings.geocodingApiKeyAMap = value;
+                        await this.plugin.saveSettings();
+                        component.inputEl.style.borderColor = value
+                            ? ''
+                            : 'red';
+                    });
+                component.inputEl.style.borderColor = this.plugin.settings
+                    .geocodingApiKeyAMap
+                    ? ''
+                    : 'red';
+            });
         let googlePlacesControl = new Setting(containerEl)
             .setName('Use Google Places for searches')
             .setDesc(
@@ -120,6 +144,8 @@ export class SettingsTab extends PluginSettingTab {
         // Display the API key control only if the search provider requires it
         apiKeyControl.settingEl.style.display =
             this.plugin.settings.searchProvider === 'google' ? '' : 'none';
+        apiKeyControlAMap.settingEl.style.display =
+            this.plugin.settings.searchProvider === 'amap' ? '' : 'none';
         googlePlacesControl.settingEl.style.display =
             this.plugin.settings.searchProvider === 'google' ? '' : 'none';
 

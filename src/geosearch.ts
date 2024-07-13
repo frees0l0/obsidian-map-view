@@ -22,7 +22,8 @@ export class GeoSearchResult {
 export class GeoSearcher {
     private searchProvider:
         | geosearch.OpenStreetMapProvider
-        | geosearch.GoogleProvider = null;
+        | geosearch.GoogleProvider
+        | geosearch.AMapProvider = null;
     private settings: PluginSettings;
     private urlConvertor: UrlConvertor;
 
@@ -34,6 +35,13 @@ export class GeoSearcher {
         else if (settings.searchProvider == 'google') {
             this.searchProvider = new geosearch.GoogleProvider({
                 apiKey: settings.geocodingApiKey,
+            });
+        }
+        else if (settings.searchProvider == 'amap') {
+            this.searchProvider = new geosearch.AMapProvider({
+                params: {
+                    key: settings.geocodingApiKeyAMap
+                }
             });
         }
     }
